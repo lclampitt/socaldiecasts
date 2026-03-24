@@ -1,0 +1,116 @@
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 48px;
+  padding-bottom: 72px;
+  align-items: start;
+}
+
+.contact-form-wrap h2 {
+  font-size: 1.8rem;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.contact-sub {
+  color: var(--text-muted);
+  font-size: 0.93rem;
+  margin-bottom: 28px;
+}
+
+.contact-success {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.contact-error {
+  background: #fff0f0;
+  color: #c0392b;
+  border: 1px solid #f5c6c6;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.contact-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.contact-submit {
+  padding: 13px 32px;
+  font-size: 1rem;
+  margin-top: 4px;
+}
+
+/* Info sidebar */
+.contact-info {
+  position: sticky;
+  top: calc(var(--nav-h) + 20px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  transition: box-shadow 0.2s;
+}
+
+.contact-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.contact-card-icon {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+}
+
+.contact-card h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.contact-card p {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.contact-card a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+@media (max-width: 800px) {
+  .contact-layout { grid-template-columns: 1fr; }
+  .contact-info { position: static; flex-direction: row; flex-wrap: wrap; }
+  .contact-card { flex: 1; min-width: 200px; }
+  .form-row-2 { grid-template-columns: 1fr; }
+  .contact-form { padding: 20px; }
+}

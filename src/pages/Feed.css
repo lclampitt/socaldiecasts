@@ -1,0 +1,61 @@
+.feed-layout {
+  padding-bottom: 72px;
+  max-width: 800px;
+}
+
+.feed-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.feed-post {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  border-left: 4px solid var(--accent);
+  transition: box-shadow 0.2s;
+}
+
+.feed-post:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.feed-post-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.feed-tag {
+  background: var(--primary);
+  color: white;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.feed-date {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.feed-post h2 {
+  font-size: 1.4rem;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.feed-post p {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  line-height: 1.75;
+}
