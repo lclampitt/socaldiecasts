@@ -2,45 +2,48 @@ import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import './TrackOrder.css'
 
-const MOCK_STATUSES = [
-  { label: 'Order Placed', done: true, date: 'Mar 20, 2026' },
-  { label: 'Payment Confirmed', done: true, date: 'Mar 20, 2026' },
-  { label: 'Packed & Ready to Ship', done: true, date: 'Mar 21, 2026' },
-  { label: 'In Transit', done: false, date: 'Expected Mar 24, 2026' },
-  { label: 'Delivered', done: false, date: '' },
-]
+function getTimeline(order) {
+  const createdDate = new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  const hasTracking = !!order.carrier_tracking
+
+  return [
+    { label: 'Order Placed', done: true, date: createdDate },
+    { label: 'Payment Confirmed', done: order.status === 'paid' || order.status === 'shipped', date: createdDate },
+    { label: 'Packed & Ready to Ship', done: hasTracking, date: hasTracking ? 'Tracking added' : '' },
+    { label: 'In Transit', done: false, date: hasTracking ? 'Check carrier for updates' : '' },
+    { label: 'Delivered', done: false, date: '' },
+  ]
+}
 
 export default function TrackOrder() {
-  const [trackingNum, setTrackingNum] = useState('')
+  const [orderNum, setOrderNum] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   async function handleSubmit(e) {
     e.preventDefault()
-    if (!trackingNum.trim()) return
+    if (!orderNum.trim()) return
     setLoading(true)
     setError('')
     setResult(null)
 
-    // Try Supabase first
     const { data, error: dbError } = await supabase
       .from('orders')
       .select('*')
-      .eq('tracking_number', trackingNum.trim())
+      .eq('tracking_number', orderNum.trim())
       .single()
 
     setLoading(false)
 
     if (data && !dbError) {
-      setResult({ fromDb: true, order: data })
-    } else if (trackingNum.trim().startsWith('PD')) {
-      // Demo mode: show placeholder tracking
-      setResult({ fromDb: false, trackingNum: trackingNum.trim() })
+      setResult(data)
     } else {
       setError('No order found with that order number. Please check your confirmation email.')
     }
   }
+
+  const timeline = result ? getTimeline(result) : []
 
   return (
     <div className="track-page container">
@@ -55,8 +58,8 @@ export default function TrackOrder() {
             <label>Order Number</label>
             <input
               type="text"
-              value={trackingNum}
-              onChange={e => setTrackingNum(e.target.value)}
+              value={orderNum}
+              onChange={e => setOrderNum(e.target.value)}
               placeholder="e.g. SD1774412741525"
               className="track-input"
             />
@@ -66,52 +69,50 @@ export default function TrackOrder() {
           </button>
         </form>
 
-        {error && (
-          <div className="track-error">{error}</div>
-        )}
+        {error && <div className="track-error">{error}</div>}
 
         {result && (
           <div className="track-result">
             <div className="track-result-header">
               <div>
                 <p className="track-result-label">Order Number</p>
-                <p className="track-result-num">
-                  {result.fromDb ? result.order.tracking_number : result.trackingNum}
-                </p>
+                <p className="track-result-num">{result.tracking_number}</p>
               </div>
-              {result.fromDb && (
-                <div>
-                  <p className="track-result-label">Shipped To</p>
-                  <p className="track-result-addr">{result.order.shipping_address}</p>
-                </div>
-              )}
-              <div className="track-badge in-transit">In Transit</div>
+              <div>
+                <p className="track-result-label">Shipped To</p>
+                <p className="track-result-addr">{result.shipping_address}</p>
+              </div>
+              <div className={`track-badge ${result.status}`}>{result.status}</div>
             </div>
 
-            {result.fromDb && (
-              <div className="track-order-info">
-                <div className="track-info-row">
-                  <span>Customer</span>
-                  <span>{result.order.customer_name}</span>
-                </div>
-                <div className="track-info-row">
-                  <span>Order Total</span>
-                  <span>${Number(result.order.total).toFixed(2)}</span>
-                </div>
-                <div className="track-info-row">
-                  <span>Status</span>
-                  <span className="status-pill">{result.order.status}</span>
-                </div>
+            <div className="track-order-info">
+              <div className="track-info-row">
+                <span>Customer</span>
+                <span>{result.customer_name}</span>
               </div>
-            )}
+              <div className="track-info-row">
+                <span>Order Total</span>
+                <span>${Number(result.total).toFixed(2)}</span>
+              </div>
+              <div className="track-info-row">
+                <span>Status</span>
+                <span className="status-pill">{result.status}</span>
+              </div>
+              {result.carrier_tracking && (
+                <div className="track-info-row">
+                  <span>Carrier Tracking</span>
+                  <span className="carrier-tracking-num">{result.carrier_tracking}</span>
+                </div>
+              )}
+            </div>
 
             <div className="track-timeline">
-              {MOCK_STATUSES.map((s, i) => (
+              {timeline.map((s, i) => (
                 <div key={i} className={`timeline-step ${s.done ? 'done' : ''}`}>
                   <div className="timeline-dot">
-                    {s.done ? '✓' : i === MOCK_STATUSES.findIndex(x => !x.done) ? '●' : '○'}
+                    {s.done ? '✓' : i === timeline.findIndex(x => !x.done) ? '●' : '○'}
                   </div>
-                  {i < MOCK_STATUSES.length - 1 && (
+                  {i < timeline.length - 1 && (
                     <div className={`timeline-line ${s.done ? 'done' : ''}`} />
                   )}
                   <div className="timeline-info">

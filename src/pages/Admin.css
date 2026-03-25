@@ -1,0 +1,193 @@
+.admin-page {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.admin-count {
+  background: #f0f0f0;
+  color: #666;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.admin-loading,
+.admin-empty {
+  text-align: center;
+  color: #888;
+  padding: 60px 0;
+}
+
+.admin-orders {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-order-card {
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.admin-order-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.admin-order-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-order-num {
+  font-family: monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+}
+
+.admin-status-badge {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+}
+
+.admin-status-badge.paid {
+  background: #e6f4ea;
+  color: #2e7d32;
+}
+
+.admin-status-badge.shipped {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.admin-status-badge.pending {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+.admin-order-date {
+  font-size: 13px;
+  color: #888;
+}
+
+.admin-order-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 24px;
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.admin-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #aaa;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.admin-value {
+  font-size: 14px;
+  color: #333;
+  margin: 0 0 4px;
+  line-height: 1.5;
+}
+
+.admin-email {
+  color: #888;
+  font-size: 13px;
+}
+
+.admin-total-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111;
+}
+
+.admin-tracking-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+}
+
+.admin-tracking-input-wrap {
+  flex: 1;
+}
+
+.admin-tracking-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: monospace;
+  color: #111;
+  box-sizing: border-box;
+  margin-top: 6px;
+}
+
+.admin-tracking-input:focus {
+  outline: none;
+  border-color: #e9000c;
+}
+
+.admin-save-btn {
+  padding: 10px 24px;
+  background: #e9000c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+  height: 42px;
+}
+
+.admin-save-btn:hover {
+  background: #c0000a;
+}
+
+.admin-save-btn.saved {
+  background: #2e7d32;
+}
+
+.admin-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-unauthorized {
+  text-align: center;
+  padding: 80px 20px;
+}
