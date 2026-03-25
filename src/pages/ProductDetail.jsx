@@ -80,7 +80,6 @@ export default function ProductDetail() {
 
             <div className="detail-meta">
               <span className="detail-condition">Condition: <strong>New</strong></span>
-              <span className="detail-category">{CATEGORY_LABELS[product.category]}</span>
             </div>
 
             <div className="detail-price">${product.price.toFixed(2)}</div>
