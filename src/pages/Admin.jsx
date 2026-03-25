@@ -4,6 +4,8 @@ import { supabase } from '../supabaseClient'
 import { useAuth } from '../context/AuthContext'
 import './Admin.css'
 
+const SUPABASE_FUNCTIONS_URL = import.meta.env.VITE_SUPABASE_URL?.replace('.supabase.co', '.supabase.co/functions/v1')
+
 const ADMIN_EMAIL = 'lclampitt44@outlook.com'
 
 const STATUS_OPTIONS = ['paid', 'shipped', 'in_transit', 'delivered']
@@ -44,18 +46,39 @@ export default function Admin() {
 
   async function saveTracking(orderId) {
     setSaving(prev => ({ ...prev, [orderId]: true }))
+
+    // Get previous tracking number to detect if it's newly added
+    const prevOrder = orders.find(o => o.id === orderId)
+    const prevTracking = prevOrder?.carrier_tracking || ''
+    const newTracking = trackingInputs[orderId] || ''
+
     await supabase
       .from('orders')
       .update({
-        carrier_tracking: trackingInputs[orderId],
+        carrier_tracking: newTracking,
         status: statusInputs[orderId],
       })
       .eq('id', orderId)
+
     setOrders(prev => prev.map(o =>
       o.id === orderId
-        ? { ...o, carrier_tracking: trackingInputs[orderId], status: statusInputs[orderId] }
+        ? { ...o, carrier_tracking: newTracking, status: statusInputs[orderId] }
         : o
     ))
+
+    // Send shipping notification email if a tracking number was just added
+    if (newTracking && newTracking !== prevTracking) {
+      try {
+        await fetch(`${SUPABASE_FUNCTIONS_URL}/send-shipping-notification`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId }),
+        })
+      } catch (err) {
+        console.error('Failed to send shipping notification:', err)
+      }
+    }
+
     setSaving(prev => ({ ...prev, [orderId]: false }))
     setSaved(prev => ({ ...prev, [orderId]: true }))
     setTimeout(() => setSaved(prev => ({ ...prev, [orderId]: false })), 2000)
