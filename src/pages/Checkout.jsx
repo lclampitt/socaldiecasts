@@ -1,11 +1,57 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { loadStripe } from '@stripe/stripe-js'
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../supabaseClient'
 import './Checkout.css'
 
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
+
 const STEPS = ['Shipping', 'Payment', 'Review']
+
+function PaymentForm({ onBack, onSuccess, shipping, orderTotal }) {
+  const stripe = useStripe()
+  const elements = useElements()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!stripe || !elements) return
+
+    setLoading(true)
+    setError('')
+
+    const { error: stripeError } = await stripe.confirmPayment({
+      elements,
+      confirmParams: { return_url: window.location.origin + '/order-success' },
+      redirect: 'if_required',
+    })
+
+    if (stripeError) {
+      setError(stripeError.message)
+      setLoading(false)
+    } else {
+      onSuccess()
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="checkout-form">
+      <h2>Payment Details</h2>
+      {error && <div className="checkout-error">{error}</div>}
+      <PaymentElement />
+      <div className="form-btns" style={{ marginTop: '24px' }}>
+        <button type="button" className="btn btn-outline" onClick={onBack}>← Back</button>
+        <button type="submit" className="btn btn-primary" disabled={!stripe || loading}>
+          {loading ? 'Processing...' : `Pay $${orderTotal.toFixed(2)}`}
+        </button>
+      </div>
+    </form>
+  )
+}
 
 export default function Checkout() {
   const { cartItems, cartTotal, clearCart } = useCart()
@@ -15,16 +61,11 @@ export default function Checkout() {
   const [step, setStep] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [clientSecret, setClientSecret] = useState('')
 
   const [shipping, setShipping] = useState({
     firstName: '', lastName: '', email: user?.email || '',
     address: '', city: '', state: '', zip: '',
-  })
-
-  const [payment] = useState({
-    cardNumber: '•••• •••• •••• ••••',
-    expiry: 'MM/YY',
-    cvv: '•••',
   })
 
   const shippingCost = cartTotal >= 75 ? 0 : 9.99
@@ -35,47 +76,48 @@ export default function Checkout() {
     setShipping(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  function handleShippingSubmit(e) {
+  async function handleShippingSubmit(e) {
     e.preventDefault()
-    const fields = Object.values(shipping)
-    if (fields.some(v => !v.trim())) {
+    if (Object.values(shipping).some(v => !v.trim())) {
       setError('Please fill in all shipping fields.')
       return
     }
     setError('')
-    setStep(1)
-  }
-
-  async function handlePlaceOrder() {
     setLoading(true)
-    setError('')
+
     try {
-      const orderData = {
-        customer_email: shipping.email,
-        customer_name: `${shipping.firstName} ${shipping.lastName}`,
-        shipping_address: `${shipping.address}, ${shipping.city}, ${shipping.state} ${shipping.zip}`,
-        items: cartItems.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
-        subtotal: cartTotal,
-        shipping_cost: shippingCost,
-        tax,
-        total: orderTotal,
-        status: 'pending',
-        tracking_number: `PD${Date.now()}`,
-      }
-
-      const { error: dbError } = await supabase.from('orders').insert([orderData])
-      if (dbError) {
-        // Proceed even if DB not set up yet — demo mode
-        console.warn('Supabase order insert error:', dbError.message)
-      }
-
-      clearCart()
-      navigate('/', { state: { orderSuccess: true, trackingNumber: orderData.tracking_number } })
+      const { data, error: fnError } = await supabase.functions.invoke('create-payment-intent', {
+        body: { amount: orderTotal },
+      })
+      if (fnError || data.error) throw new Error(fnError?.message || data.error)
+      setClientSecret(data.clientSecret)
+      setStep(1)
     } catch (err) {
-      setError('Something went wrong. Please try again.')
+      setError('Could not initialize payment. Please try again.')
     } finally {
       setLoading(false)
     }
+  }
+
+  async function handlePaymentSuccess() {
+    const orderData = {
+      customer_email: shipping.email,
+      customer_name: `${shipping.firstName} ${shipping.lastName}`,
+      shipping_address: `${shipping.address}, ${shipping.city}, ${shipping.state} ${shipping.zip}`,
+      items: cartItems.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+      subtotal: cartTotal,
+      shipping_cost: shippingCost,
+      tax,
+      total: orderTotal,
+      status: 'paid',
+      tracking_number: `SD${Date.now()}`,
+    }
+
+    const { error: dbError } = await supabase.from('orders').insert([orderData])
+    if (dbError) console.warn('Order save error:', dbError.message)
+
+    clearCart()
+    navigate('/', { state: { orderSuccess: true, trackingNumber: orderData.tracking_number } })
   }
 
   if (cartItems.length === 0) {
@@ -89,7 +131,6 @@ export default function Checkout() {
         <h1>Checkout</h1>
       </div>
 
-      {/* Steps */}
       <div className="checkout-steps">
         {STEPS.map((s, i) => (
           <div key={s} className={`step ${i === step ? 'active' : ''} ${i < step ? 'done' : ''}`}>
@@ -101,7 +142,6 @@ export default function Checkout() {
       </div>
 
       <div className="checkout-layout">
-        {/* Left: Form */}
         <div className="checkout-form-wrap">
           {error && <div className="checkout-error">{error}</div>}
 
@@ -141,82 +181,22 @@ export default function Checkout() {
                 <label>ZIP Code</label>
                 <input name="zip" value={shipping.zip} onChange={handleShippingChange} placeholder="90001" maxLength={10} />
               </div>
-              <button type="submit" className="btn btn-primary form-submit-btn">
-                Continue to Payment →
+              <button type="submit" className="btn btn-primary form-submit-btn" disabled={loading}>
+                {loading ? 'Loading...' : 'Continue to Payment →'}
               </button>
             </form>
           )}
 
-          {/* Step 1: Payment */}
-          {step === 1 && (
-            <div className="checkout-form">
-              <h2>Payment Details</h2>
-              <div className="stripe-placeholder">
-                <div className="stripe-card-icon">💳</div>
-                <p className="stripe-note">Secure payment powered by Stripe</p>
-                <div className="stripe-fields">
-                  <div className="form-group">
-                    <label>Card Number</label>
-                    <input value="4242 4242 4242 4242" readOnly className="stripe-input" />
-                  </div>
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Expiry Date</label>
-                      <input value="12/26" readOnly className="stripe-input" />
-                    </div>
-                    <div className="form-group">
-                      <label>CVV</label>
-                      <input value="•••" readOnly className="stripe-input" />
-                    </div>
-                  </div>
-                  <div className="form-group">
-                    <label>Name on Card</label>
-                    <input value={`${shipping.firstName} ${shipping.lastName}`} readOnly className="stripe-input" />
-                  </div>
-                </div>
-                <p className="stripe-demo-note">
-                  ⚠️ This is a Stripe placeholder. Connect your Stripe account to enable real payments.
-                </p>
-              </div>
-              <div className="form-btns">
-                <button className="btn btn-outline" onClick={() => setStep(0)}>← Back</button>
-                <button className="btn btn-primary" onClick={() => setStep(2)}>Review Order →</button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 2: Review */}
-          {step === 2 && (
-            <div className="checkout-form">
-              <h2>Review Your Order</h2>
-              <div className="review-section">
-                <h3>Shipping To</h3>
-                <p>{shipping.firstName} {shipping.lastName}</p>
-                <p>{shipping.address}</p>
-                <p>{shipping.city}, {shipping.state} {shipping.zip}</p>
-                <p>{shipping.email}</p>
-              </div>
-              <div className="review-section">
-                <h3>Items</h3>
-                {cartItems.map(item => (
-                  <div key={item.id} className="review-item">
-                    <span className="review-item-name">{item.name}</span>
-                    <span className="review-item-qty">×{item.quantity}</span>
-                    <span className="review-item-price">${(item.price * item.quantity).toFixed(2)}</span>
-                  </div>
-                ))}
-              </div>
-              <div className="form-btns">
-                <button className="btn btn-outline" onClick={() => setStep(1)}>← Back</button>
-                <button
-                  className="btn btn-primary place-order-btn"
-                  onClick={handlePlaceOrder}
-                  disabled={loading}
-                >
-                  {loading ? 'Placing Order...' : `Place Order — $${orderTotal.toFixed(2)}`}
-                </button>
-              </div>
-            </div>
+          {/* Step 1: Payment (real Stripe) */}
+          {step === 1 && clientSecret && (
+            <Elements stripe={stripePromise} options={{ clientSecret }}>
+              <PaymentForm
+                onBack={() => setStep(0)}
+                onSuccess={handlePaymentSuccess}
+                shipping={shipping}
+                orderTotal={orderTotal}
+              />
+            </Elements>
           )}
         </div>
 
