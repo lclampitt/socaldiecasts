@@ -1,0 +1,116 @@
+.footer {
+  background: var(--primary-dark);
+  color: rgba(255,255,255,0.75);
+  margin-top: auto;
+}
+
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 60px;
+  padding: 56px 0 40px;
+}
+
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.footer-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-logo-main {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.footer-logo-sub {
+  font-size: 0.72rem;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footer-desc {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.55);
+  max-width: 360px;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.footer-col h4 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 14px;
+  font-weight: 700;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 9px;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover {
+  color: white;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 18px 0;
+}
+
+.footer-bottom .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-bottom p {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+}
+
+@media (max-width: 900px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    padding: 40px 0 28px;
+  }
+  .footer-links {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+
+@media (max-width: 560px) {
+  .footer-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-bottom .container {
+    flex-direction: column;
+    text-align: center;
+  }
+}
