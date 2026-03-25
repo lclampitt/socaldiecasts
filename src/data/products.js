@@ -36,23 +36,6 @@ export const products = [
     inStock: true,
   },
   {
-    id: 3,
-    name: "Brad Keselowski 2009 #09 Miccosukee Talladega Raced Win Version 1/24",
-    driver: "Brad Keselowski",
-    price: 299.99,
-    category: "raced-win",
-    image: "/images/bkdegawin1.jpg",
-    images: [
-      "/images/bkdegawin1.jpg",
-      "/images/bkdegawin2.jpg",
-      "/images/bkdegawin3.jpg",
-      "/images/bkdegawin4.jpg",
-    ],
-    description: "Brad Keselowski's 2009 Talladega race-winning diecast in the Miccosukee Resort & Gaming livery. Authentic raced win version — 1:24 scale with race-used details.",
-    limited: null,
-    inStock: true,
-  },
-  {
     id: 4,
     name: "Chase Elliott 2017 #24 NAPA Patriotic Color Chrome 1/24",
     driver: "Chase Elliott",
