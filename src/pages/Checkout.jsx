@@ -116,6 +116,20 @@ export default function Checkout() {
     const { error: dbError } = await supabase.from('orders').insert([orderData])
     if (dbError) console.warn('Order save error:', dbError.message)
 
+    // Send confirmation email
+    await supabase.functions.invoke('send-order-confirmation', {
+      body: {
+        customerEmail: shipping.email,
+        customerName: `${shipping.firstName} ${shipping.lastName}`,
+        orderNumber: orderData.tracking_number,
+        items: orderData.items,
+        subtotal: cartTotal,
+        shippingCost,
+        tax,
+        total: orderTotal,
+      },
+    })
+
     clearCart()
     navigate('/order-success', { state: { trackingNumber: orderData.tracking_number } })
   }
