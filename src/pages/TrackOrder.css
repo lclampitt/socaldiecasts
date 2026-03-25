@@ -117,6 +117,28 @@
 
 .track-info-row span:first-child { color: #aaaaaa; }
 
+.carrier-tracking-num {
+  font-family: monospace;
+  font-size: 13px;
+  color: #333;
+}
+
+.track-carrier-btn {
+  display: inline-block;
+  background: #e9000c;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.track-carrier-btn:hover {
+  background: #c0000a;
+}
+
 .status-pill {
   background: rgba(22, 163, 74, 0.08);
   color: #16a34a;

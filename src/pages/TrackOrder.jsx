@@ -2,16 +2,48 @@ import { useState } from 'react'
 import { supabase } from '../supabaseClient'
 import './TrackOrder.css'
 
+function detectCarrier(trackingNum) {
+  if (!trackingNum) return null
+  const t = trackingNum.trim()
+  if (/^1Z/i.test(t)) return 'ups'
+  if (/^(94|93|92|91|90)\d{18,}/.test(t)) return 'usps'
+  if (/^[0-9]{15}$/.test(t) || /^[0-9]{12}$/.test(t)) return 'fedex'
+  if (/^D\d{10,}/i.test(t)) return 'ups'
+  return null
+}
+
+function getCarrierLink(carrier, trackingNum) {
+  switch (carrier) {
+    case 'usps': return `https://tools.usps.com/go/TrackConfirmAction?tLabels=${trackingNum}`
+    case 'ups': return `https://www.ups.com/track?tracknum=${trackingNum}`
+    case 'fedex': return `https://www.fedex.com/fedex/track/Track.do?tracknumbers=${trackingNum}`
+    default: return null
+  }
+}
+
+function getCarrierName(carrier) {
+  switch (carrier) {
+    case 'usps': return 'USPS'
+    case 'ups': return 'UPS'
+    case 'fedex': return 'FedEx'
+    default: return 'Carrier'
+  }
+}
+
 function getTimeline(order) {
   const createdDate = new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  const status = order.status
   const hasTracking = !!order.carrier_tracking
+
+  const statusRank = { paid: 1, shipped: 2, in_transit: 3, delivered: 4 }
+  const rank = statusRank[status] || 1
 
   return [
     { label: 'Order Placed', done: true, date: createdDate },
-    { label: 'Payment Confirmed', done: order.status === 'paid' || order.status === 'shipped', date: createdDate },
-    { label: 'Packed & Ready to Ship', done: hasTracking, date: hasTracking ? 'Tracking added' : '' },
-    { label: 'In Transit', done: false, date: hasTracking ? 'Check carrier for updates' : '' },
-    { label: 'Delivered', done: false, date: '' },
+    { label: 'Payment Confirmed', done: rank >= 1, date: createdDate },
+    { label: 'Packed & Ready to Ship', done: hasTracking || rank >= 2, date: hasTracking ? '' : '' },
+    { label: 'In Transit', done: rank >= 3, date: '' },
+    { label: 'Delivered', done: rank >= 4, date: rank >= 4 ? 'Package delivered' : '' },
   ]
 }
 
@@ -44,6 +76,8 @@ export default function TrackOrder() {
   }
 
   const timeline = result ? getTimeline(result) : []
+  const carrier = result ? detectCarrier(result.carrier_tracking) : null
+  const carrierLink = carrier ? getCarrierLink(carrier, result.carrier_tracking) : null
 
   return (
     <div className="track-page container">
@@ -82,7 +116,7 @@ export default function TrackOrder() {
                 <p className="track-result-label">Shipped To</p>
                 <p className="track-result-addr">{result.shipping_address}</p>
               </div>
-              <div className={`track-badge ${result.status}`}>{result.status}</div>
+              <div className={`track-badge ${result.status}`}>{result.status?.replace('_', ' ')}</div>
             </div>
 
             <div className="track-order-info">
@@ -96,12 +130,25 @@ export default function TrackOrder() {
               </div>
               <div className="track-info-row">
                 <span>Status</span>
-                <span className="status-pill">{result.status}</span>
+                <span className="status-pill">{result.status?.replace('_', ' ')}</span>
               </div>
               {result.carrier_tracking && (
                 <div className="track-info-row">
                   <span>Carrier Tracking</span>
                   <span className="carrier-tracking-num">{result.carrier_tracking}</span>
+                </div>
+              )}
+              {carrierLink && (
+                <div className="track-info-row">
+                  <span></span>
+                  <a
+                    href={carrierLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="track-carrier-btn"
+                  >
+                    Track with {getCarrierName(carrier)} →
+                  </a>
                 </div>
               )}
             </div>

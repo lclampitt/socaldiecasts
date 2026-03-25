@@ -160,6 +160,28 @@
   border-color: #e9000c;
 }
 
+.admin-status-select-wrap {
+  min-width: 160px;
+}
+
+.admin-status-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #111;
+  background: #fff;
+  cursor: pointer;
+  margin-top: 6px;
+  height: 42px;
+}
+
+.admin-status-select:focus {
+  outline: none;
+  border-color: #e9000c;
+}
+
 .admin-save-btn {
   padding: 10px 24px;
   background: #e9000c;

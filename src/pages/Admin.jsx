@@ -6,12 +6,15 @@ import './Admin.css'
 
 const ADMIN_EMAIL = 'lclampitt44@outlook.com'
 
+const STATUS_OPTIONS = ['paid', 'shipped', 'in_transit', 'delivered']
+
 export default function Admin() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [trackingInputs, setTrackingInputs] = useState({})
+  const [statusInputs, setStatusInputs] = useState({})
   const [saving, setSaving] = useState({})
   const [saved, setSaved] = useState({})
 
@@ -29,8 +32,13 @@ export default function Admin() {
       .order('created_at', { ascending: false })
     setOrders(data || [])
     const inputs = {}
-    data?.forEach(o => { inputs[o.id] = o.carrier_tracking || '' })
+    const statuses = {}
+    data?.forEach(o => {
+      inputs[o.id] = o.carrier_tracking || ''
+      statuses[o.id] = o.status || 'paid'
+    })
     setTrackingInputs(inputs)
+    setStatusInputs(statuses)
     setLoading(false)
   }
 
@@ -38,8 +46,16 @@ export default function Admin() {
     setSaving(prev => ({ ...prev, [orderId]: true }))
     await supabase
       .from('orders')
-      .update({ carrier_tracking: trackingInputs[orderId], status: 'shipped' })
+      .update({
+        carrier_tracking: trackingInputs[orderId],
+        status: statusInputs[orderId],
+      })
       .eq('id', orderId)
+    setOrders(prev => prev.map(o =>
+      o.id === orderId
+        ? { ...o, carrier_tracking: trackingInputs[orderId], status: statusInputs[orderId] }
+        : o
+    ))
     setSaving(prev => ({ ...prev, [orderId]: false }))
     setSaved(prev => ({ ...prev, [orderId]: true }))
     setTimeout(() => setSaved(prev => ({ ...prev, [orderId]: false })), 2000)
@@ -112,6 +128,18 @@ export default function Admin() {
                     value={trackingInputs[order.id] || ''}
                     onChange={e => setTrackingInputs(prev => ({ ...prev, [order.id]: e.target.value }))}
                   />
+                </div>
+                <div className="admin-status-select-wrap">
+                  <label className="admin-label">Order Status</label>
+                  <select
+                    className="admin-status-select"
+                    value={statusInputs[order.id] || 'paid'}
+                    onChange={e => setStatusInputs(prev => ({ ...prev, [order.id]: e.target.value }))}
+                  >
+                    {STATUS_OPTIONS.map(s => (
+                      <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1).replace('_', ' ')}</option>
+                    ))}
+                  </select>
                 </div>
                 <button
                   className={`admin-save-btn ${saved[order.id] ? 'saved' : ''}`}
