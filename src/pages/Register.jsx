@@ -12,7 +12,6 @@ export default function Register() {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [confirmed, setConfirmed] = useState(false)
 
   function handleChange(e) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -43,22 +42,8 @@ export default function Register() {
     if (err) {
       setError(err.message)
     } else {
-      setConfirmed(true)
+      navigate('/')
     }
-  }
-
-  if (confirmed) {
-    return (
-      <div className="auth-page">
-        <div className="auth-card auth-confirm">
-          <div className="auth-confirm-icon">✉️</div>
-          <h2>Check Your Email</h2>
-          <p>We sent a confirmation link to <strong>{form.email}</strong>. Click the link in that email to activate your account.</p>
-          <p className="auth-confirm-note">Didn't get it? Check your spam folder or <button className="auth-resend-btn" onClick={() => setConfirmed(false)}>try again</button>.</p>
-          <Link to="/login" className="btn btn-primary auth-submit" style={{ textAlign: 'center', marginTop: '8px' }}>Back to Sign In</Link>
-        </div>
-      </div>
-    )
   }
 
   return (
