@@ -130,6 +130,7 @@ export default function Checkout() {
         shippingCost,
         tax,
         total: orderTotal,
+        shippingAddress: `${shipping.address}, ${shipping.city}, ${shipping.state} ${shipping.zip}`,
       },
     })
 
