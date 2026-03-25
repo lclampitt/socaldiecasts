@@ -16,7 +16,7 @@ export default function Admin() {
   const [saved, setSaved] = useState({})
 
   useEffect(() => {
-    if (!user) { navigate('/login'); return }
+    if (!user) { navigate('/login', { state: { from: '/admin' } }); return }
     if (user.email !== ADMIN_EMAIL) return
     fetchOrders()
   }, [user])

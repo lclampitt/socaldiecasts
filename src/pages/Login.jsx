@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import './Auth.css'
 
 export default function Login() {
   const { signIn } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from || '/'
 
   const [form, setForm] = useState({ email: '', password: '' })
   const [error, setError] = useState('')
@@ -24,7 +26,7 @@ export default function Login() {
     if (err) {
       setError(err.message)
     } else {
-      navigate('/')
+      navigate(from)
     }
   }
 
