@@ -9,9 +9,9 @@ import './Checkout.css'
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
 
-const STEPS = ['Shipping', 'Payment', 'Review']
+const STEPS = ['Shipping', 'Review', 'Payment']
 
-function PaymentForm({ onBack, onSuccess, shipping, orderTotal }) {
+function PaymentForm({ onBack, onSuccess, orderTotal }) {
   const stripe = useStripe()
   const elements = useElements()
   const [loading, setLoading] = useState(false)
@@ -76,22 +76,26 @@ export default function Checkout() {
     setShipping(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  async function handleShippingSubmit(e) {
+  function handleShippingSubmit(e) {
     e.preventDefault()
     if (Object.values(shipping).some(v => !v.trim())) {
       setError('Please fill in all shipping fields.')
       return
     }
     setError('')
-    setLoading(true)
+    setStep(1)
+  }
 
+  async function handleProceedToPayment() {
+    setLoading(true)
+    setError('')
     try {
       const { data, error: fnError } = await supabase.functions.invoke('create-payment-intent', {
         body: { amount: orderTotal },
       })
       if (fnError || data.error) throw new Error(fnError?.message || data.error)
       setClientSecret(data.clientSecret)
-      setStep(1)
+      setStep(2)
     } catch (err) {
       setError('Could not initialize payment. Please try again.')
     } finally {
@@ -116,7 +120,6 @@ export default function Checkout() {
     const { error: dbError } = await supabase.from('orders').insert([orderData])
     if (dbError) console.warn('Order save error:', dbError.message)
 
-    // Send confirmation email
     await supabase.functions.invoke('send-order-confirmation', {
       body: {
         customerEmail: shipping.email,
@@ -195,19 +198,70 @@ export default function Checkout() {
                 <label>ZIP Code</label>
                 <input name="zip" value={shipping.zip} onChange={handleShippingChange} placeholder="90001" maxLength={10} />
               </div>
-              <button type="submit" className="btn btn-primary form-submit-btn" disabled={loading}>
-                {loading ? 'Loading...' : 'Continue to Payment →'}
+              <button type="submit" className="btn btn-primary form-submit-btn">
+                Continue to Review →
               </button>
             </form>
           )}
 
-          {/* Step 1: Payment (real Stripe) */}
-          {step === 1 && clientSecret && (
+          {/* Step 1: Review */}
+          {step === 1 && (
+            <div className="checkout-form">
+              <h2>Review Your Order</h2>
+
+              <div className="review-section">
+                <h3>Shipping To</h3>
+                <p>{shipping.firstName} {shipping.lastName}</p>
+                <p>{shipping.address}</p>
+                <p>{shipping.city}, {shipping.state} {shipping.zip}</p>
+                <p>{shipping.email}</p>
+              </div>
+
+              <div className="review-section">
+                <h3>Items</h3>
+                {cartItems.map(item => (
+                  <div key={item.id} className="review-item">
+                    <span className="review-item-name">{item.name}</span>
+                    <span className="review-item-price">${item.price.toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="review-section">
+                <h3>Order Total</h3>
+                <div className="review-item">
+                  <span>Subtotal</span>
+                  <span>${cartTotal.toFixed(2)}</span>
+                </div>
+                <div className="review-item">
+                  <span>Shipping</span>
+                  <span>{shippingCost === 0 ? 'FREE' : `$${shippingCost.toFixed(2)}`}</span>
+                </div>
+                <div className="review-item">
+                  <span>Tax</span>
+                  <span>${tax.toFixed(2)}</span>
+                </div>
+                <div className="review-item review-item--total">
+                  <span>Total</span>
+                  <span>${orderTotal.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <div className="form-btns">
+                <button className="btn btn-outline" onClick={() => setStep(0)}>← Back</button>
+                <button className="btn btn-primary" onClick={handleProceedToPayment} disabled={loading}>
+                  {loading ? 'Loading...' : 'Confirm & Pay →'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Payment */}
+          {step === 2 && clientSecret && (
             <Elements stripe={stripePromise} options={{ clientSecret }}>
               <PaymentForm
-                onBack={() => setStep(0)}
+                onBack={() => setStep(1)}
                 onSuccess={handlePaymentSuccess}
-                shipping={shipping}
                 orderTotal={orderTotal}
               />
             </Elements>

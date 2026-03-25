@@ -205,6 +205,15 @@
 .review-item-qty { color: #aaaaaa; flex-shrink: 0; }
 .review-item-price { font-weight: 600; flex-shrink: 0; color: #111; }
 
+.review-item--total {
+  border-top: 2px solid #111111;
+  margin-top: 4px;
+  padding-top: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  border-bottom: none !important;
+}
+
 /* Summary sidebar */
 .checkout-summary {
   background: #ffffff;
