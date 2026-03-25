@@ -116,10 +116,18 @@ export default function ProductDetail() {
                   <span>{product.limited}</span>
                 </div>
               )}
-              <div className="detail-spec-row">
-                <span>Availability</span>
-                <span className="in-stock-label">{product.inStock ? 'In Stock' : 'Out of Stock'}</span>
-              </div>
+              {product.quantity !== undefined && (
+                <div className="detail-spec-row">
+                  <span>In Stock</span>
+                  <span>{product.quantity} available</span>
+                </div>
+              )}
+              {product.quantity === undefined && (
+                <div className="detail-spec-row">
+                  <span>Availability</span>
+                  <span className="in-stock-label">{product.inStock ? 'In Stock' : 'Out of Stock'}</span>
+                </div>
+              )}
             </div>
           </div>
         </div>

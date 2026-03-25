@@ -16,6 +16,7 @@ export const products = [
     description: "Shane Van Gisbergen's 2025 Sonoma race-winning diecast in the iconic Red Bull livery. ELITE Premier Edition — numbered 1:24 scale die-cast produced by Lionel Racing. Issued in a strict limited edition of 108 pieces, complete with certificate of authenticity, display case, and collector's card.",
     limited: "108 pieces",
     inStock: true,
+    quantity: 6,
   },
   {
     id: 2,
