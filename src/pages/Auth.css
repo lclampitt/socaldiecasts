@@ -82,6 +82,50 @@
   color: var(--color-orange-light);
 }
 
+.auth-confirm {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-confirm-icon {
+  font-size: 3rem;
+  margin-bottom: 4px;
+}
+
+.auth-confirm h2 {
+  font-size: 1.6rem;
+  color: #111111;
+}
+
+.auth-confirm p {
+  color: #666666;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 340px;
+}
+
+.auth-confirm-note {
+  font-size: 13px !important;
+  color: #aaaaaa !important;
+}
+
+.auth-resend-btn {
+  background: none;
+  border: none;
+  color: var(--color-orange);
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 0;
+}
+
+.auth-resend-btn:hover {
+  color: var(--color-orange-light);
+}
+
 @media (max-width: 480px) {
   .auth-card { padding: 28px 20px; }
 }
