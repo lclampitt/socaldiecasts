@@ -13,6 +13,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import ShopByDriver from './pages/ShopByDriver'
 import ProductDetail from './pages/ProductDetail'
+import OrderSuccess from './pages/OrderSuccess'
 import './App.css'
 
 export default function App() {
@@ -37,6 +38,7 @@ export default function App() {
                 <Route path="/shop-by-driver" element={<ShopByDriver />} />
                 <Route path="/shop-by-driver/:driver" element={<Products />} />
                 <Route path="/product/:id" element={<ProductDetail />} />
+                <Route path="/order-success" element={<OrderSuccess />} />
               </Routes>
             </main>
             <footer className="footer">

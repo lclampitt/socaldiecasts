@@ -117,7 +117,7 @@ export default function Checkout() {
     if (dbError) console.warn('Order save error:', dbError.message)
 
     clearCart()
-    navigate('/', { state: { orderSuccess: true, trackingNumber: orderData.tracking_number } })
+    navigate('/order-success', { state: { trackingNumber: orderData.tracking_number } })
   }
 
   if (cartItems.length === 0) {

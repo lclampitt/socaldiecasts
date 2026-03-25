@@ -19,13 +19,7 @@ export function CartProvider({ children }) {
   function addToCart(product) {
     setCartItems(prev => {
       const existing = prev.find(item => item.id === product.id)
-      if (existing) {
-        return prev.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
-      }
+      if (existing) return prev // already in cart, don't add again
       return [...prev, { ...product, quantity: 1 }]
     })
   }
@@ -39,9 +33,10 @@ export function CartProvider({ children }) {
       removeFromCart(productId)
       return
     }
+    // max quantity of 1
     setCartItems(prev =>
       prev.map(item =>
-        item.id === productId ? { ...item, quantity } : item
+        item.id === productId ? { ...item, quantity: 1 } : item
       )
     )
   }
