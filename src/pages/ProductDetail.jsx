@@ -98,11 +98,6 @@ export default function ProductDetail() {
 
             <div className="detail-divider" />
 
-            <div className="detail-description">
-              <h3>Description</h3>
-              <p>{product.description}</p>
-            </div>
-
             <div className="detail-specs">
               <div className="detail-spec-row">
                 <span>Scale</span>
