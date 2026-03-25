@@ -38,7 +38,7 @@ export default function TrackOrder() {
       // Demo mode: show placeholder tracking
       setResult({ fromDb: false, trackingNum: trackingNum.trim() })
     } else {
-      setError('No order found with that tracking number. Please check your confirmation email.')
+      setError('No order found with that order number. Please check your confirmation email.')
     }
   }
 
@@ -46,18 +46,18 @@ export default function TrackOrder() {
     <div className="track-page container">
       <div className="page-header">
         <h1>Track Your Order</h1>
-        <p>Enter your tracking number to see real-time status</p>
+        <p>Enter your order number to see real-time status</p>
       </div>
 
       <div className="track-form-wrap">
         <form onSubmit={handleSubmit} className="track-form">
           <div className="form-group">
-            <label>Tracking Number</label>
+            <label>Order Number</label>
             <input
               type="text"
               value={trackingNum}
               onChange={e => setTrackingNum(e.target.value)}
-              placeholder="e.g. PD1712345678"
+              placeholder="e.g. SD1774412741525"
               className="track-input"
             />
           </div>
@@ -74,7 +74,7 @@ export default function TrackOrder() {
           <div className="track-result">
             <div className="track-result-header">
               <div>
-                <p className="track-result-label">Tracking Number</p>
+                <p className="track-result-label">Order Number</p>
                 <p className="track-result-num">
                   {result.fromDb ? result.order.tracking_number : result.trackingNum}
                 </p>
