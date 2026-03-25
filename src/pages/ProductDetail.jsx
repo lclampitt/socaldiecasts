@@ -32,9 +32,7 @@ export default function ProductDetail() {
   const maxQty = product.quantity || 1
 
   function handleAdd() {
-    for (let i = 0; i < selectedQty; i++) {
-      addToCart(product)
-    }
+    addToCart(product, selectedQty)
   }
 
   const images = product.images || [product.image]
