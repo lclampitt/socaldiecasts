@@ -44,7 +44,12 @@ export default function Cart() {
                 <p className="cart-item-price">${item.price.toFixed(2)}</p>
               </div>
               <div className="cart-item-controls">
-                <p className="cart-item-subtotal">${item.price.toFixed(2)}</p>
+                <div className="cart-qty-controls">
+                  <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>−</button>
+                  <span>{item.quantity}</span>
+                  <button onClick={() => updateQuantity(item.id, item.quantity + 1)} disabled={item.quantity >= (item.maxQuantity || 1)}>+</button>
+                </div>
+                <p className="cart-item-subtotal">${(item.price * item.quantity).toFixed(2)}</p>
                 <button
                   className="remove-btn"
                   onClick={() => removeFromCart(item.id)}
