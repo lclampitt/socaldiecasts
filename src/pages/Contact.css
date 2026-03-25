@@ -73,6 +73,51 @@
   max-width: 280px;
 }
 
+.contact-intro {
+  color: #666666;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.contact-info-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.contact-info-row:last-child {
+  border-bottom: none;
+}
+
+.contact-info-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #aaaaaa;
+  font-weight: 600;
+  width: 60px;
+  flex-shrink: 0;
+}
+
+.contact-info-value {
+  font-size: 15px;
+  color: #111111;
+  font-weight: 600;
+}
+
+.contact-email-link {
+  font-size: 15px;
+  color: var(--color-orange);
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.contact-email-link:hover {
+  color: var(--color-orange-light);
+}
+
 @media (max-width: 480px) {
   .contact-form { padding: 24px 18px; }
 }
