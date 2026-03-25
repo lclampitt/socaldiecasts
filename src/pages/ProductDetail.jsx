@@ -17,6 +17,7 @@ export default function ProductDetail() {
 
   const product = products.find(p => p.id === Number(id))
   const [activeImg, setActiveImg] = useState(0)
+  const [selectedQty, setSelectedQty] = useState(1)
 
   if (!product) {
     return (
@@ -28,9 +29,12 @@ export default function ProductDetail() {
   }
 
   const inCart = cartItems.some(item => item.id === product.id)
+  const maxQty = product.quantity || 1
 
   function handleAdd() {
-    addToCart(product)
+    for (let i = 0; i < selectedQty; i++) {
+      addToCart(product)
+    }
   }
 
   const images = product.images || [product.image]
@@ -83,6 +87,17 @@ export default function ProductDetail() {
             </div>
 
             <div className="detail-price">${product.price.toFixed(2)}</div>
+
+            {maxQty > 1 && (
+              <div className="detail-qty-selector">
+                <label>Quantity</label>
+                <div className="detail-qty-controls">
+                  <button onClick={() => setSelectedQty(q => Math.max(1, q - 1))}>−</button>
+                  <span>{selectedQty}</span>
+                  <button onClick={() => setSelectedQty(q => Math.min(maxQty, q + 1))}>+</button>
+                </div>
+              </div>
+            )}
 
             <button
               className={`btn detail-add-btn ${inCart ? 'btn-outline' : 'btn-primary'}`}
