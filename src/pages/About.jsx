@@ -12,6 +12,10 @@ export default function About() {
       <div className="about-content container">
         {/* About Me */}
         <section className="about-section about-hero-section">
+          <div className="about-photos">
+            <img src="/images/logan1.jpg" alt="Logan at the track" className="about-photo" />
+            <img src="/images/logan2.jpg" alt="Logan Clampitt" className="about-photo" />
+          </div>
           <div className="about-text">
             <h2>About Me</h2>
             <p>
@@ -23,13 +27,6 @@ export default function About() {
             <p>
               I currently offer diecasts I've owned over the years along with special finish pieces and extras from my personal collection. Shipping is free, and you'll receive a confirmation email once your order is placed. A tracking number will be provided within 1–3 days and you can check back anytime using your order number. Thanks for stopping by and reading!
             </p>
-          </div>
-          <div className="about-image-wrap">
-            <img
-              src="https://picsum.photos/seed/about1/600/400"
-              alt="Diecast collection"
-              className="about-image"
-            />
           </div>
         </section>
 

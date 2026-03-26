@@ -25,9 +25,26 @@
 
 .about-hero-section {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: auto 1fr;
   gap: 48px;
-  align-items: center;
+  align-items: start;
+}
+
+.about-photos {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.about-photo {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  border: 1px solid #e5e5e5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .about-text {
@@ -145,6 +162,8 @@
 
 @media (max-width: 768px) {
   .about-hero-section { grid-template-columns: 1fr; }
+  .about-photos { flex-direction: row; width: 100%; }
+  .about-photo { width: 50%; height: 180px; }
 }
 
 @media (max-width: 500px) {
