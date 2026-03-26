@@ -15,10 +15,13 @@ export default function About() {
           <div className="about-text">
             <h2>About Me</h2>
             <p>
-              Hi, I'm Logan Clampitt — a NASCAR fan and diecast collector based in Southern California. I started SoCal Diecasts to share my passion for the sport with other collectors and fans.
+              Hi! My name is Logan Clampitt and I'm the proud owner of SoCal Diecasts, located in Southern California. I've been collecting diecasts since 2019 and it's grown into a big passion of mine. I first became a NASCAR fan when my dad and I went to my first race at Auto Club Speedway. I was always a Dale Earnhardt Jr. fan growing up and now I just enjoy watching the racing.
             </p>
             <p>
-              I source only officially licensed diecast cars from trusted manufacturers, so you can be confident every piece you receive is the real deal. Whether you're a lifelong collector or just starting out, I'm here to help you find exactly what you're looking for.
+              I also have a professional sim racing background spanning 10 years. I started iRacing in 2013 and slowly climbed through the ranks, becoming a professional in 2016 in the eNASCAR Coca-Cola iRacing Series through 2024. I scored two runner-up championships, 3 wins, and several top 5s throughout my time in the series. Once I started college, I also competed in the eNASCAR College iRacing Series and was able to rack up $30k+ in scholarship winnings, earning two championships, two runner-ups, and multiple wins.
+            </p>
+            <p>
+              I currently offer diecasts I've owned over the years along with special finish pieces and extras from my personal collection. Shipping is free, and you'll receive a confirmation email once your order is placed. A tracking number will be provided within 1–3 days and you can check back anytime using your order number. Thanks for stopping by and reading!
             </p>
           </div>
           <div className="about-image-wrap">
