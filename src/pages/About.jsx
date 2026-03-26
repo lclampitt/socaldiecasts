@@ -6,7 +6,7 @@ export default function About() {
     <div className="about-page">
       <div className="page-header">
         <h1>About SoCal Diecasts</h1>
-        <p>Passionate collectors, building the ultimate diecast destination</p>
+
       </div>
 
       <div className="about-content container">
