@@ -118,6 +118,11 @@
   color: var(--color-orange-light);
 }
 
+.form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
 @media (max-width: 480px) {
   .contact-form { padding: 24px 18px; }
 }
